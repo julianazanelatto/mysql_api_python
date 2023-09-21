@@ -19,5 +19,5 @@ MySQL em uma instância local.
 
 # Branchs
 
-MASTER: No banch master está o projeto de conexão e implementação do CRUD para acesso ao MySQL.
-SECOND: Consiste na modificação do código original para criação da api com Fastapi
+- MASTER: No banch master está o projeto de conexão e implementação do CRUD para acesso ao MySQL.
+- SECOND: Consiste na modificação do código original para criação da api com Fastapi
