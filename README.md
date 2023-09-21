@@ -16,3 +16,8 @@ MySQL em uma instância local.
 1. Controller: Routes, Controller
 2. Database class
 3. main (aplicação principal) 
+
+# Branchs
+
+MASTER: No banch master está o projeto de conexão e implementação do CRUD para acesso ao MySQL.
+SECOND: Consiste na modificação do código original para criação da api com Fastapi
