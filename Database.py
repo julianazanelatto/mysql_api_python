@@ -30,8 +30,10 @@ class MySQLDatabase:
             print(' '.join(['-', table['Tables_in_'+self._database]]))
         return dict_of_tables
 
+
     def desc_table(self, table):
         return self._querying(' '.join(['DESC', table]))
+
 
     def get_lines_from_table(self, table, limit=False, number_of_lines=10):
         query = ' '.join(['SELECT * FROM', table])
@@ -101,8 +103,10 @@ class MySQLDatabase:
         try:
             self._execute_query_with_dict(insertion_query, attr)
         except Exception as err:
-            raise f'Message: {err}'
+            # raise f'Message: {err}'
+            return False
         self.conn.commit()
+
         return True
 
 
@@ -111,7 +115,7 @@ class MySQLDatabase:
         return self.get_lines_from_table(table=table_name)
 
 
-    def update_users_by_id(self, id, data: dict):
+    def update_customers_contact_by_id(self, id, data: dict):
         """
             Vamos receber um conjunto prédefinido de campos a serem atualizados
         :param id:
@@ -119,12 +123,22 @@ class MySQLDatabase:
         :return:
         """
         data["id"] = id
-        update_query = "UPDATE users SET name = %(name)s, email = %(email)s WHERE id = %(id)s"
-        self._execute_query_with_dict(update_query, data)
+        update_query = "UPDATE customers SET phone = %(phone)s WHERE id = %(customerNumber)s"
+        try:
+            self._execute_query_with_dict(update_query, data)
+        except Exception:
+            return False
+
         self.conn.commit()
+        return True
 
     def delete_instance(self, table_name: str, condition: str, value):
         self._is_on_database(table_name)
         delete_query = f"DELETE FROM {table_name} WHERE {condition} = %s"
-        self._execute_query_with_dict(delete_query, value)
+        try:
+            self._execute_query_with_dict(delete_query, value)
+        except Exception:
+            return False
+
         self.conn.commit()
+        return True
