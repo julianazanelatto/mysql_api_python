@@ -104,7 +104,7 @@ class MySQLDatabase:
             self._execute_query_with_dict(insertion_query, attr)
         except Exception as err:
             # raise f'Message: {err}'
-            return False
+            return err
         self.conn.commit()
 
         return True
@@ -122,12 +122,12 @@ class MySQLDatabase:
         :param data:
         :return:
         """
-        data["id"] = id
-        update_query = "UPDATE customers SET phone = %(phone)s WHERE id = %(customerNumber)s"
+        data["customerNumber"] = id
+        update_query = "UPDATE customers SET phone = %(phone)s WHERE customerNumber = %(customerNumber)s"
         try:
             self._execute_query_with_dict(update_query, data)
-        except Exception:
-            return False
+        except Exception as err:
+            return err
 
         self.conn.commit()
         return True
@@ -137,8 +137,8 @@ class MySQLDatabase:
         delete_query = f"DELETE FROM {table_name} WHERE {condition} = %s"
         try:
             self._execute_query_with_dict(delete_query, value)
-        except Exception:
-            return False
+        except Exception as err:
+            return err
 
         self.conn.commit()
         return True

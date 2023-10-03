@@ -16,9 +16,9 @@ async def read_root():
             '[GET] Database tables':'http://127.0.0.1:8000/db_tables',
             '[GET] Reading some instances of a table': 'http://127.0.0.1:8000/reading/{tables}',
             '[GET] Reading table instances defining the limit': 'http://127.0.0.1:8000/reading/{table}/{instances}',
-            '[POST] Creation of a instance in the current table':'http://127.0.0.1:8000/{table}',
-            '[PUT] Updating the Customers table by id':'http://127.0.0.1:8000/update/{table}/{id}',
-            '[PUT] Removing (delete) a instance by some condition':'http://127.0.0.1:8000/delete/{table}'
+            '[POST] Creation of a instance in the current table':'http://127.0.0.1:8000/create/{table_name}',
+            '[PUT] Updating the Customers contact in table by id':'http://127.0.0.1:8000/update/customers/{id}',
+            '[PUT] Removing (delete) a instance by some condition':'http://127.0.0.1:8000/delete/{table_name}'
         }
     }
 
@@ -43,27 +43,30 @@ async def read_db_table(table: str):
 async def read_db_table(table: str, instances):
     return db.get_lines_from_table(table, limit=True, number_of_lines=instances)
 
-@router.post('/{table}')
+@router.post('/create/{table_name}')
 async def creating_table_instance(attr: dict, table_name: str):
     # attr será enviado via payload
     status = db.create_line(attr, table_name)
-    if status:
+    if status is True:
         return 'Inserted successfully'
 
-    return HTTPException(status_code=404, detail='Error during the insertion')
+    return HTTPException(status_code=404, detail=f'Error during the insertion. Message: {status}')
 
-@router.put('/update/{table}/{id}')
+@router.put('/update/customers/{id}')
 async def update_customers_contact_by_id(id, data: dict):
     # o dict será enviado via payload
-    if db.update_users_by_id(id, data):
+    status = db.update_customers_contact_by_id(id, data)
+    if status is True:
         return 'Updated successfully'
 
-    return HTTPException(status_code=404, detail='Error during the update')
+    return HTTPException(status_code=404, detail=f'Error during the update. Message:{status}')
 
-@router.put('/delete/{table}')
+@router.put('/delete/{table_name}')
 async def deleting_instance(table_name: str, data: dict):
     # dict com os valores condition: str, value recebidos via post
-    if db.delete_instance( table_name, data['condition'], data['value']):
+
+    status = db.delete_instance( table_name, data['condition'], [data['value']])
+    if status is True:
         return 'Instance removed successfully'
 
-    return HTTPException(status_code=404, detail='Error in removal')
+    return HTTPException(status_code=404, detail=f'Error in removal. Message:{status}')
